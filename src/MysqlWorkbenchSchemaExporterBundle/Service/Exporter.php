@@ -3,8 +3,8 @@
 namespace MysqlWorkbenchSchemaExporterBundle\Service;
 
 use \MysqlWorkbenchSchemaExporterBundle\Core\Schema;
-use \Symfony\Component\Console\Output\OutputInterface;
 use \Symfony\Component\DependencyInjection\ContainerAware;
+use \Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Description of Exporter
@@ -16,7 +16,7 @@ class Exporter extends ContainerAware {
     /**
      * Schemas
      *
-     * @var MysqlWorkbenchSchemasExporterBundle\Core\Schema[]
+     * @var \MysqlWorkbenchSchemaExporterBundle\Core\Schema[]
      */
     protected $schemas = array();
 
@@ -34,7 +34,7 @@ class Exporter extends ContainerAware {
      * Set the schema
      *
      * @param array $schemas
-     * @return \MysqlWorkbenchSchemasExporterBundle\Service\Exporter
+     * @return \MysqlWorkbenchSchemaExporterBundle\Service\Exporter
      */
     public function setSchemas(array $schemas)
     {
@@ -45,7 +45,7 @@ class Exporter extends ContainerAware {
     /**
      * Get the current schemas
      *
-     * @return MysqlWorkbenchSchemasExporterBundle\Core\Schema[]
+     * @return \MysqlWorkbenchSchemaExporterBundle\Core\Schema[]
      */
     public function getSchemas()
     {
@@ -58,6 +58,7 @@ class Exporter extends ContainerAware {
             if (is_array($value)) {
                 $value = new Schema($name, $value);
                 $value->setContainer($this->container);
+                $value->initTool();
             }
         }
 
@@ -71,46 +72,74 @@ class Exporter extends ContainerAware {
      */
     public function export(OutputInterface $output)
     {
-        $bundles = array();
         foreach($this->getSchemas() as $schema) {
             $output->writeln(sprintf('Exporting "<info>%s</info>" schema', $schema->getName()));
-            $location = $schema->export();
+            $location = $schema->export($output);
             $output->writeln(sprintf('Saved to "<info>%s</info>".', $location));
-            $bundles[] = array(
-                'name' => $schema->getOption('bundle'),
-                'path' => $schema->getBundle()->getPath()
-            );
-        }
-
-        // Use the Symfony generate doctrine entities
-        foreach($bundles as $bundle) {
-            $kernel = $this->container->get('kernel');
-            $application = new \Symfony\Bundle\FrameworkBundle\Console\Application($kernel);
-            $application->setAutoExit(false);
-            $application->setCatchExceptions(false);
-
-            $options = array(
-                'command' => 'generate:doctrine:entities',
-                'name' => $bundle['name'],
-                '--path' => $bundle['path'],
-                '--no-backup' => true
-            );
-
-            try {
-                $application->run(new \Symfony\Component\Console\Input\ArrayInput($options), $output);
-
-                // Bug where the new entities are created but the repository classes aren't generated
-                $application->run(new \Symfony\Component\Console\Input\ArrayInput($options), $output);
-            } catch (\Exception $ex) {
-                $output->writeln('There were errors while running <info>generate:doctrine:entities</info>');
-                $output->writeln(sprintf(
-                    'Please run <info>app/console generate:doctrine:entities --path %s --no-backup %s</info>',
-                     $bundle['path'],
-                     $bundle['name']
-                ));
-            }
 
         }
+
+//        exit;
+//
+//
+//        $bundles = array();
+//        foreach($this->getSchemas() as $schema) {
+//            $output->writeln(sprintf('Exporting "<info>%s</info>" schema', $schema->getName()));
+//            $location = $schema->export();
+//            $output->writeln(sprintf('Saved to "<info>%s</info>".', $location));
+//            $bundles[] = array(
+//                'name' => $schema->getOption('bundle'),
+//                'path' => $schema->getBundle()->getPath()
+//            );
+//        }
+//
+//
+//
+//        exit;
+//
+//        foreach($bundles as $bundle) {
+//            w($bundle['path']);
+//
+//            $options = array(
+//                'rm',
+//                '-rf',
+//                $bundle['path']
+//            );
+//            $application->run(new ArrayInput($options), $output);
+//            w($options);
+//        }
+//        w($bundles);
+//        exit;
+//        // Use the Symfony generate doctrine entities
+//        foreach($bundles as $bundle) {
+//
+//            $kernel = $this->container->get('kernel');
+//            $application = new Application($kernel);
+//            $application->setAutoExit(false);
+//            $application->setCatchExceptions(false);
+//
+//            $options = array(
+//                'command' => 'generate:doctrine:entities',
+//                'name' => $bundle['name'],
+//                '--path' => $bundle['path'],
+//                '--no-backup' => true
+//            );
+//
+//            try {
+//                $application->run(new \Symfony\Component\Console\Input\ArrayInput($options), $output);
+//
+//                // Bug where the new entities are created but the repository classes aren't generated
+//                $application->run(new \Symfony\Component\Console\Input\ArrayInput($options), $output);
+//            } catch (\Exception $ex) {
+//                $output->writeln('There were errors while running <info>generate:doctrine:entities</info>');
+//                $output->writeln(sprintf(
+//                    'Please run <info>app/console generate:doctrine:entities --path %s --no-backup %s</info>',
+//                     $bundle['path'],
+//                     $bundle['name']
+//                ));
+//            }
+//
+//        }
 
     }
 }

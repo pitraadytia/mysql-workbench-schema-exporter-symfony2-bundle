@@ -4,6 +4,12 @@ namespace MysqlWorkbenchSchemaExporterBundle\Core;
 
 use \Symfony\Component\DependencyInjection\ContainerAware;
 use \MwbExporter\Bootstrap;
+use \Symfony\Component\Console\Output\OutputInterface;
+use \Symfony\Component\Console\Input\InputInterface;
+use \Symfony\Component\Console\Input\InputArgument;
+use \Symfony\Component\Console\Input\InputOption;
+use \Symfony\Component\Console\Input\ArrayInput;
+use \Symfony\Component\Console\Application;
 
 /**
  * Description of Schema
@@ -34,6 +40,11 @@ class Schema extends ContainerAware
     protected $bundle = null;
 
     /**
+     * @var \Symfony\Component\Console\Application
+     */
+    protected $console;
+
+    /**
      * Default formater params
      *
      * @var string[][]
@@ -53,6 +64,9 @@ class Schema extends ContainerAware
     {
         $this->setName($name);
         $this->setOptions($options);
+
+        w($this);
+
     }
 
     /**
@@ -134,15 +148,38 @@ class Schema extends ContainerAware
     }
 
     /**
-     * Get the output directory
+     * Get the root output directory
      *
      * @return string
      */
-    protected function getOutputDir()
+    protected function getOutputRootDir()
     {
-        return $this->getBundle()->getPath() .
-               DIRECTORY_SEPARATOR .
+        return $this->getBundle()->getPath() . DIRECTORY_SEPARATOR;
+
+
+    }
+
+    /**
+     * Get the entity output directory
+     *
+     * @return string
+     */
+    protected function getOutpuEntitytDir()
+    {
+        return $this->getOutputRootDir() .
                $this->getOption('output', 'Entity/');
+
+    }
+
+    /**
+     * Get the config output directory
+     *
+     * @return string
+     */
+    protected function getOutpuConfigDir()
+    {
+        return $this->getOutputRootDir() .
+        $this->getOption('config', 'Config/');
 
     }
 
@@ -163,13 +200,59 @@ class Schema extends ContainerAware
         return $params;
     }
 
+    public function initTool()
+    {
+        $kernel = $this->container->get('kernel');
+        $this->console = new Application($kernel);
+        $this->console->setAutoExit(false);
+
+        $this->console->register('rm')
+            ->setDefinition([new InputArgument('path', InputArgument::REQUIRED)])
+            ->setCode(function (InputInterface $input, OutputInterface $output) {
+
+                    $path = $input->getArgument('path');
+                    $cmd = 'rm -rf '.$path. ' 2>&1';
+
+                    @exec($cmd, $res, $returnVar);
+
+                    if(!$returnVar) {
+                        foreach($res as $r) {
+                            $output->writeln(sprintf('<info>%s</info>', $r));
+                        }
+                    } else {
+                        foreach($res as $r) {
+                            $output->writeln(sprintf('<comment>%s</comment>', $r));
+                        }
+                    }
+                })
+        ;
+    }
     /**
      * Export
      *
      * @return string
      */
-    public function export()
+    public function export(OutputInterface $output)
     {
+
+w(
+    $this->getOutputRootDir(),
+    $this->getOutpuEntitytDir(),
+    $this->getOutpuConfigDir()
+);
+        $configDoctrineDir = $this->getOutpuConfigDir().'doctrine/';
+        $this->console->run(new ArrayInput(['command' => 'rm', 'path'=>$configDoctrineDir]));
+
+        $outputDir = $this->getOutpuEntitytDir();
+        $this->console->run(new ArrayInput(['command' => 'rm', 'path'=>$outputDir]));
+
+
+
+
+        //rm -rf ${DIR}/src/Sandbox/GeneratedBundle/Resources/config/doctrine
+        //rm -rf ${DIR}/src/Sandbox/GeneratedBundle/Entity
+
+        exit;
         $bootstrap = new Bootstrap();
 
         // define a formatter and do configuration
@@ -182,7 +265,6 @@ class Schema extends ContainerAware
             $this->getMwbFile(),
             $this->getOutputDir()
         );
-
         // show the output
         return $document->getWriter()->getStorage()->getResult();
     }
