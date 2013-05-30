@@ -33,6 +33,12 @@ class Configuration implements ConfigurationInterface
                     ->end()
                     ->arrayNode('params')
                         ->children()
+
+                            ->scalarNode('useTabs')->end()
+                            ->scalarNode('logToConsole')->end()
+                            ->scalarNode('logFile')->end()
+                            ->scalarNode('skipGetterAndSetter')->end()
+                            ->scalarNode('baseNamespace')->end()
                             ->scalarNode('repositoryNamespace')->end()
                             ->scalarNode('backupExistingFile')->end()
                             ->scalarNode('skipPluralNameChecking')->end()
