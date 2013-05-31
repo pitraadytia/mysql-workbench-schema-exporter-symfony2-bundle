@@ -2,14 +2,17 @@
 
 namespace MysqlWorkbenchSchemaExporterBundle\Core;
 
+use Doctrine\Bundle\DoctrineBundle\Command\GenerateEntitiesDoctrineCommand;
+use Doctrine\Bundle\DoctrineBundle\Command\Proxy\ConvertMappingDoctrineCommand;
 use \Symfony\Component\DependencyInjection\ContainerAware;
 use \MwbExporter\Bootstrap;
+
 use \Symfony\Component\Console\Output\OutputInterface;
 use \Symfony\Component\Console\Input\InputInterface;
 use \Symfony\Component\Console\Input\InputArgument;
 use \Symfony\Component\Console\Input\InputOption;
 use \Symfony\Component\Console\Input\ArrayInput;
-use \Symfony\Component\Console\Application;
+use \Symfony\Bundle\FrameworkBundle\Console\Application;
 
 /**
  * Description of Schema
@@ -62,11 +65,8 @@ class Schema extends ContainerAware
      */
     public function __construct($name, array $options)
     {
-        $this->setName($name);
+            $this->setName($name);
         $this->setOptions($options);
-
-        w($this);
-
     }
 
     /**
@@ -152,10 +152,20 @@ class Schema extends ContainerAware
      *
      * @return string
      */
-    protected function getOutputRootDir()
+    protected function getBundleRootDir()
     {
         return $this->getBundle()->getPath() . DIRECTORY_SEPARATOR;
+    }
 
+    /**
+     * Get the model output directory
+     *
+     * @return string
+     */
+    protected function getOutpuModeltDir()
+    {
+        return $this->getBundleRootDir() .
+               $this->getOption('output-dir', 'Entity/Model');
 
     }
 
@@ -166,9 +176,7 @@ class Schema extends ContainerAware
      */
     protected function getOutpuEntitytDir()
     {
-        return $this->getOutputRootDir() .
-               $this->getOption('output', 'Entity/');
-
+        return dirname($this->getOutpuModeltDir());
     }
 
     /**
@@ -178,8 +186,8 @@ class Schema extends ContainerAware
      */
     protected function getOutpuConfigDir()
     {
-        return $this->getOutputRootDir() .
-        $this->getOption('config', 'Config/');
+        return $this->getBundleRootDir() .
+        $this->getOption('config-dir', 'Resources/config');
 
     }
 
@@ -200,33 +208,60 @@ class Schema extends ContainerAware
         return $params;
     }
 
+
+    private function runCmd($cmd, OutputInterface $output)
+    {
+        @exec($cmd, $res, $returnVar);
+
+        if(!$returnVar) {
+            foreach($res as $r) {
+                $output->writeln(sprintf('<info>%s</info>', $r));
+            }
+        } else {
+            foreach($res as $r) {
+                $output->writeln(sprintf('<comment>%s</comment>', $r));
+            }
+        }
+    }
+
     public function initTool()
     {
         $kernel = $this->container->get('kernel');
         $this->console = new Application($kernel);
+
         $this->console->setAutoExit(false);
+        $this->console->setCatchExceptions(false);
+
+        $this->console->add(new GenerateEntitiesDoctrineCommand);
+        $this->console->add(new ConvertMappingDoctrineCommand);
+
+        $self = $this;
 
         $this->console->register('rm')
             ->setDefinition([new InputArgument('path', InputArgument::REQUIRED)])
-            ->setCode(function (InputInterface $input, OutputInterface $output) {
+            ->setCode(function (InputInterface $input, OutputInterface $output) use($self) {
 
                     $path = $input->getArgument('path');
                     $cmd = 'rm -rf '.$path. ' 2>&1';
 
-                    @exec($cmd, $res, $returnVar);
-
-                    if(!$returnVar) {
-                        foreach($res as $r) {
-                            $output->writeln(sprintf('<info>%s</info>', $r));
-                        }
-                    } else {
-                        foreach($res as $r) {
-                            $output->writeln(sprintf('<comment>%s</comment>', $r));
-                        }
-                    }
+                    $output->writeln(sprintf('<comment>%s</comment>', $cmd));
+                    $self->runCmd($cmd, $output);
                 })
         ;
+
+        $this->console->register('mkdir')
+            ->setDefinition([new InputArgument('path', InputArgument::REQUIRED)])
+            ->setCode(function (InputInterface $input, OutputInterface $output) use($self) {
+
+                    $path = $input->getArgument('path');
+                    $cmd = 'mkdir '.$path. ' 2>&1';
+                    $output->writeln(sprintf('<comment>%s</comment>', $cmd));
+                    $self->runCmd($cmd, $output);
+                })
+        ;
+
     }
+
     /**
      * Export
      *
@@ -234,25 +269,19 @@ class Schema extends ContainerAware
      */
     public function export(OutputInterface $output)
     {
+        $output->writeln(sprintf('Exporting "<info>%s</info>" schema', $this->getName()));
 
-w(
-    $this->getOutputRootDir(),
-    $this->getOutpuEntitytDir(),
-    $this->getOutpuConfigDir()
-);
-        $configDoctrineDir = $this->getOutpuConfigDir().'doctrine/';
-        $this->console->run(new ArrayInput(['command' => 'rm', 'path'=>$configDoctrineDir]));
+        $outputEntityDir = $this->getOutpuEntitytDir();
+        $this->console->run(new ArrayInput(['command' => 'mkdir', 'path'=>$outputEntityDir]));
 
-        $outputDir = $this->getOutpuEntitytDir();
-        $this->console->run(new ArrayInput(['command' => 'rm', 'path'=>$outputDir]));
+        $outputModelDir = $this->getOutpuModeltDir();
+        $this->console->run(new ArrayInput(['command' => 'rm', 'path'=>$outputModelDir]));
 
+        $configDoctrineDir = $this->getOutpuConfigDir().'/doctrine';
 
+        $configDoctrineXmlDir = $configDoctrineDir.'-xml';
+        $this->console->run(new ArrayInput(['command' => 'rm', 'path'=>$configDoctrineXmlDir]));
 
-
-        //rm -rf ${DIR}/src/Sandbox/GeneratedBundle/Resources/config/doctrine
-        //rm -rf ${DIR}/src/Sandbox/GeneratedBundle/Entity
-
-        exit;
         $bootstrap = new Bootstrap();
 
         // define a formatter and do configuration
@@ -260,12 +289,33 @@ w(
         $formatter->setup($this->getFormatterParams());
 
         // load document and export
+        $output->writeln(sprintf('Create Entities'));
         $document = $bootstrap->export(
             $formatter,
             $this->getMwbFile(),
-            $this->getOutputDir()
+            $this->getOutpuModeltDir()
         );
-        // show the output
-        return $document->getWriter()->getStorage()->getResult();
+
+        $bootstrap->preCompileModels($formatter, $document);
+
+        $options = [
+            'command'     => 'generate:doctrine:entities',
+            'name'        => $this->getOption('bundle'),
+            '--path'      => $this->getBundleRootDir(),
+            '--no-backup' => true
+        ];
+        $this->console->run(new ArrayInput($options), $output);
+        $output->writeln(sprintf('Saved to <info>%s</info>', $outputModelDir));
+
+        $options = [
+            'command'     => 'doctrine:mapping:convert',
+            'to-type'        => 'xml',
+            'dest-path'      => $configDoctrineXmlDir,
+        ];
+        $this->console->run(new ArrayInput($options), $output);
+        $output->writeln(sprintf('export model meta to <info>%s</info>', $configDoctrineXmlDir));
+
+        $bootstrap->postCompileModels($formatter, $document);
+
     }
 }
