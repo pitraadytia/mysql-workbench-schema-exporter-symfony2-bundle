@@ -24,7 +24,7 @@
         "doctrine/doctrine-bundle": "1.2.*",
         "turnaev/mysql-workbench-schema-exporter": "dev-master"
     },
-    "minimum-stability":"dev",
+    
     "autoload": {
         "psr-0": { "MysqlWorkbenchSchemaExporterBundle\\": "src/" }
     }
