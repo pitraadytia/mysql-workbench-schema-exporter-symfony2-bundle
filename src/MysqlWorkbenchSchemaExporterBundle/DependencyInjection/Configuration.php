@@ -41,6 +41,7 @@ class Configuration implements ConfigurationInterface
                             ->scalarNode('backupExistingFile')->end()
                             ->scalarNode('skipPluralNameChecking')->end()
                             ->scalarNode('enhanceManyToManyDetection')->end()
+                            ->scalarNode('generateEntitySerialization')->end()
 
                             ->scalarNode('baseNamespace')->end()
                             ->scalarNode('bundleNamespace')->end()
