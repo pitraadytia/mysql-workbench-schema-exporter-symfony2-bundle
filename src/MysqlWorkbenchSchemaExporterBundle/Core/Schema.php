@@ -288,6 +288,7 @@ class Schema extends ContainerAware
         $formatter = $bootstrap->getFormatter($this->getOption('formatter'));
         $formatter->setup($this->getFormatterParams());
 
+
         // load document and export
         $output->writeln(sprintf('Create Entities'));
         $document = $bootstrap->export(
@@ -296,16 +297,8 @@ class Schema extends ContainerAware
             $this->getOutpuModeltDir()
         );
 
-        $bootstrap->preCompileModels($formatter, $document);
 
-        $options = [
-            'command'     => 'generate:doctrine:entities',
-            'name'        => $this->getOption('bundle'),
-            '--path'      => $this->getBundleRootDir(),
-            '--no-backup' => true
-        ];
-        $this->console->run(new ArrayInput($options), $output);
-        $output->writeln(sprintf('Saved to <info>%s</info>', $outputModelDir));
+        $bootstrap->preCompileModels($formatter, $document);
 
         $options = [
             'command'     => 'doctrine:mapping:convert',
