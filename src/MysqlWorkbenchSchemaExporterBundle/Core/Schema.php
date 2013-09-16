@@ -288,7 +288,6 @@ class Schema extends ContainerAware
         $formatter = $bootstrap->getFormatter($this->getOption('formatter'));
         $formatter->setup($this->getFormatterParams());
 
-
         // load document and export
         $output->writeln(sprintf('Create Entities'));
         $document = $bootstrap->export(
@@ -296,8 +295,7 @@ class Schema extends ContainerAware
             $this->getMwbFile(),
             $this->getOutpuModeltDir()
         );
-
-
+exit; //@todo remove
         $bootstrap->preCompileModels($formatter, $document);
 
         $options = [
@@ -309,6 +307,5 @@ class Schema extends ContainerAware
         $output->writeln(sprintf('export model meta to <info>%s</info>', $configDoctrineXmlDir));
 
         $bootstrap->postCompileModels($formatter, $document);
-
     }
 }
