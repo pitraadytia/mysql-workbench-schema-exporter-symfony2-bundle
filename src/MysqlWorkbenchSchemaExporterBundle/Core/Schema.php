@@ -295,7 +295,7 @@ class Schema extends ContainerAware
             $this->getMwbFile(),
             $this->getOutpuModeltDir()
         );
-exit; //@todo remove
+
         $bootstrap->preCompileModels($formatter, $document);
 
         $options = [
