@@ -42,7 +42,7 @@ class Configuration implements ConfigurationInterface
                             ->scalarNode('skipPluralNameChecking')->end()
                             ->scalarNode('enhanceManyToManyDetection')->end()
                             ->scalarNode('generateEntitySerialization')->end()
-
+                            ->scalarNode('generateEntityToArray')->end()
                             ->scalarNode('baseNamespace')->end()
                             ->scalarNode('bundleNamespace')->end()
                             ->scalarNode('bundleNamespaceTo')->end()
