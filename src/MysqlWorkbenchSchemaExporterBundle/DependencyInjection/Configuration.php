@@ -56,7 +56,7 @@ class Configuration implements ConfigurationInterface
                             ->scalarNode('indentation')->end()
                         ->end()
                     ->end()
-                    ->scalarNode('output-dir')
+                    ->scalarNode('output_dir')
                         ->defaultValue('Entity/Model')
                     ->end()
                     ->scalarNode('config-dir')
