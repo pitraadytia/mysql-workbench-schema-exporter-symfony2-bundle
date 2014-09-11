@@ -165,7 +165,7 @@ class Schema extends ContainerAware
     protected function getOutpuModeltDir()
     {
         return $this->getBundleRootDir() .
-               $this->getOption('output-dir', 'Entity/Model');
+               $this->getOption('output_dir', 'Entity/Model');
 
     }
 
