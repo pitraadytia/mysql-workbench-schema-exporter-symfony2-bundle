@@ -308,4 +308,25 @@ class Schema extends ContainerAware
 
         $bootstrap->postCompileModels($formatter, $document);
     }
+    public function exportWithRepository(OutputInterface $output)
+    {
+        $output->writeln(sprintf('Exporting "<info>%s</info>" schema', $this->getName()));
+
+        $outputEntityDir = $this->getOutpuEntitytDir();
+        $this->console->run(new ArrayInput(['command' => 'mkdir', 'path'=>$outputEntityDir]));
+        $bootstrap = new Bootstrap();
+
+        // define a formatter and do configuration
+        $formatter = $bootstrap->getFormatter($this->getOption('formatter'));
+        $formatter->setup($this->getFormatterParams());
+
+        // load document and export
+        $output->writeln(sprintf('Create Entities'));
+        $bootstrap->export(
+            $formatter,
+            $this->getMwbFile(),
+            $this->getOutpuModeltDir()
+        );        
+    }
+    
 }
