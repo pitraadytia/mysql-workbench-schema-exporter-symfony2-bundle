@@ -54,7 +54,9 @@ class Schema extends ContainerAware
      */
     protected $defaultFormatterParams = array(
         'indentation' => 4,
-        'backupExistingFile' => false
+        'backupExistingFile' => false,
+        'relatedVarNameFormat' => "%related%",
+        'relatedPrefix'      =>""
     );
 
     /**
