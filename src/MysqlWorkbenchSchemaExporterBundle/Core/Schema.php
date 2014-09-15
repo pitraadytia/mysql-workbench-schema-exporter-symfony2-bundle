@@ -187,7 +187,7 @@ class Schema extends ContainerAware
     protected function getOutpuConfigDir()
     {
         return $this->getBundleRootDir() .
-        $this->getOption('config-dir', 'Resources/config');
+        $this->getOption('config_dir', 'Resources/config');
 
     }
 

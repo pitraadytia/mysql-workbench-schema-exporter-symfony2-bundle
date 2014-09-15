@@ -59,7 +59,7 @@ class Configuration implements ConfigurationInterface
                     ->scalarNode('output_dir')
                         ->defaultValue('Entity/Model')
                     ->end()
-                    ->scalarNode('config-dir')
+                    ->scalarNode('config_dir')
                         ->defaultValue('Resources/config')
                     ->end()
                     ->scalarNode('file')
