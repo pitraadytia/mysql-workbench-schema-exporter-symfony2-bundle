@@ -76,4 +76,15 @@ class Exporter extends ContainerAware {
             $schema->export($output);
         }
     }
+    /**
+     * Export
+     *
+     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     */
+    public function exportWithRepository(OutputInterface $output)
+    {
+        foreach($this->getSchemas() as $schema) {
+            $schema->exportWithRepository($output);
+        }
+    }
 }
