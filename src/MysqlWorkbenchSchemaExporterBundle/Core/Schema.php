@@ -265,7 +265,7 @@ class Schema extends ContainerAware
     /**
      * Export
      *
-     * @return string
+     * @param OutputInterface $output
      */
     public function export(OutputInterface $output)
     {
@@ -308,6 +308,12 @@ class Schema extends ContainerAware
 
         $bootstrap->postCompileModels($formatter, $document);
     }
+
+    /**
+     * Export with repository
+     *
+     * @param OutputInterface $output
+     */
     public function exportWithRepository(OutputInterface $output)
     {
         $output->writeln(sprintf('Exporting "<info>%s</info>" schema', $this->getName()));
@@ -328,5 +334,4 @@ class Schema extends ContainerAware
             $this->getOutpuModeltDir()
         );        
     }
-    
 }
