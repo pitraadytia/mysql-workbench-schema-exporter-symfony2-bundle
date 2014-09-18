@@ -50,32 +50,35 @@ Multiple schemas
                     indentation: 4,
                     filename: "%entity%.%extension%",
                     quoteIdentifier: false
+                    skipColumnWithManyRelation: false
+                    relatedVarNameFormat: "%related%"
+                    relatedPrefix: ""
 
 
 Sample
 
-mysql_workbench_schema_exporter:
-    schema:
-       vending:
-         bundle: SandboxGeneratedBundle
-         params:
-             indentation: 4
-             useTabs: false
-             skipPluralNameChecking: false
-             backupExistingFile: false
-             enhanceManyToManyDetection: true
-             logToConsole: ~
-             logFile: ~
-             useAnnotationPrefix: "ORM\\"
-             repositoryNamespace: "Sandbox\\GeneratedBundle\\Entity\\Repository"
-             useAutomaticRepository: true
-             entityNamespace: "Entity\\Model"
-             skipGetterAndSetter: false
-             quoteIdentifier: false
-             baseNamespace: "VN"
-             generateEntitySerialization: false
-             generateEntityToArray: true
-             bundleNamespaceTo: 'VN\\CoreBundle'
+    mysql_workbench_schema_exporter:
+        schema:
+           vending:
+             bundle: SandboxGeneratedBundle
+             params:
+                 indentation: 4
+                 useTabs: false
+                 skipPluralNameChecking: false
+                 backupExistingFile: false
+                 enhanceManyToManyDetection: true
+                 logToConsole: ~
+                 logFile: ~
+                 useAnnotationPrefix: "ORM\\"
+                 repositoryNamespace: "Sandbox\\GeneratedBundle\\Entity\\Repository"
+                 useAutomaticRepository: true
+                 entityNamespace: "Entity\\Model"
+                 skipGetterAndSetter: false
+                 quoteIdentifier: false
+                 baseNamespace: "VN"
+                 generateEntitySerialization: false
+                 generateEntityToArray: true
+                 bundleNamespaceTo: 'VN\\CoreBundle'
 
 Execution
 =========
