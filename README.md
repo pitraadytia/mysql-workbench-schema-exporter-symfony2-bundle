@@ -86,4 +86,4 @@ Execution
 To process the files execute the command in the terminal:
 
 	app/console mysqlworkbenchschemaexporter:dump
-
+    app/console mysqlworkbenchschemaexporter:withRepository
