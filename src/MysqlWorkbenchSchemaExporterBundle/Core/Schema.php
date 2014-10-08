@@ -53,10 +53,10 @@ class Schema extends ContainerAware
      * @var string[][]
      */
     protected $defaultFormatterParams = array(
-        'indentation' => 4,
-        'backupExistingFile' => false,
+        'indentation'          => 4,
+        'backupExistingFile'   => false,
         'relatedVarNameFormat' => "%related%",
-        'relatedPrefix'      =>""
+        'relatedPrefix'        => ""
     );
 
     /**
@@ -67,7 +67,7 @@ class Schema extends ContainerAware
      */
     public function __construct($name, array $options)
     {
-            $this->setName($name);
+        $this->setName($name);
         $this->setOptions($options);
     }
 
