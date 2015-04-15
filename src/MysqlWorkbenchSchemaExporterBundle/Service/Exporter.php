@@ -2,26 +2,26 @@
 
 namespace MysqlWorkbenchSchemaExporterBundle\Service;
 
-use \MysqlWorkbenchSchemaExporterBundle\Core\Schema;
-use \Symfony\Component\DependencyInjection\ContainerAware;
-use \Symfony\Component\Console\Output\OutputInterface;
+use MysqlWorkbenchSchemaExporterBundle\Core\Schema;
+use Symfony\Component\DependencyInjection\ContainerAware;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Description of Exporter
+ * Description of Exporter.
  *
  * @author marc
  */
-class Exporter extends ContainerAware {
-
+class Exporter extends ContainerAware
+{
     /**
-     * Schemas
+     * Schemas.
      *
      * @var \MysqlWorkbenchSchemaExporterBundle\Core\Schema[]
      */
     protected $schemas = array();
 
     /**
-     * Constructure
+     * Constructure.
      *
      * @param type $schemas
      */
@@ -31,26 +31,27 @@ class Exporter extends ContainerAware {
     }
 
     /**
-     * Set the schema
+     * Set the schema.
      *
      * @param array $schemas
+     *
      * @return \MysqlWorkbenchSchemaExporterBundle\Service\Exporter
      */
     public function setSchemas(array $schemas)
     {
         $this->schemas = $schemas;
+
         return $this;
     }
 
     /**
-     * Get the current schemas
+     * Get the current schemas.
      *
      * @return \MysqlWorkbenchSchemaExporterBundle\Core\Schema[]
      */
     public function getSchemas()
     {
-        foreach ($this->schemas as $name => &$value)
-        {
+        foreach ($this->schemas as $name => &$value) {
             if ($value instanceof Schema) {
                 continue;
             }
@@ -66,24 +67,24 @@ class Exporter extends ContainerAware {
     }
 
     /**
-     * Export
+     * Export.
      *
      * @param \Symfony\Component\Console\Output\OutputInterface $output
      */
     public function export(OutputInterface $output)
     {
-        foreach($this->getSchemas() as $schema) {
+        foreach ($this->getSchemas() as $schema) {
             $schema->export($output);
         }
     }
     /**
-     * Export
+     * Export.
      *
      * @param \Symfony\Component\Console\Output\OutputInterface $output
      */
     public function exportWithRepository(OutputInterface $output)
     {
-        foreach($this->getSchemas() as $schema) {
+        foreach ($this->getSchemas() as $schema) {
             $schema->exportWithRepository($output);
         }
     }

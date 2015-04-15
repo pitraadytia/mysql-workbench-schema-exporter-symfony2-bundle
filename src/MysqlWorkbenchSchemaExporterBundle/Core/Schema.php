@@ -4,39 +4,37 @@ namespace MysqlWorkbenchSchemaExporterBundle\Core;
 
 use Doctrine\Bundle\DoctrineBundle\Command\GenerateEntitiesDoctrineCommand;
 use Doctrine\Bundle\DoctrineBundle\Command\Proxy\ConvertMappingDoctrineCommand;
-use \Symfony\Component\DependencyInjection\ContainerAware;
-use \MwbExporter\Bootstrap;
-
-use \Symfony\Component\Console\Output\OutputInterface;
-use \Symfony\Component\Console\Input\InputInterface;
-use \Symfony\Component\Console\Input\InputArgument;
-use \Symfony\Component\Console\Input\InputOption;
-use \Symfony\Component\Console\Input\ArrayInput;
-use \Symfony\Bundle\FrameworkBundle\Console\Application;
+use Symfony\Component\DependencyInjection\ContainerAware;
+use MwbExporter\Bootstrap;
+use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Bundle\FrameworkBundle\Console\Application;
 
 /**
- * Description of Schema
+ * Description of Schema.
  *
  * @author Marc Easen <marc@easen.co.uk>
  */
 class Schema extends ContainerAware
 {
     /**
-     * Bundle name
+     * Bundle name.
      *
      * @var string
      */
     protected $name = null;
 
     /**
-     * Options
+     * Options.
      *
      * @var string[][]
      */
     protected $options = array();
 
     /**
-     * Bundle reflection class
+     * Bundle reflection class.
      *
      * @var \Symfony\Component\HttpKernel\Bundle\Bundle
      */
@@ -48,22 +46,22 @@ class Schema extends ContainerAware
     protected $console;
 
     /**
-     * Default formater params
+     * Default formater params.
      *
      * @var string[][]
      */
     protected $defaultFormatterParams = array(
         'indentation'          => 4,
         'backupExistingFile'   => false,
-        'relatedVarNameFormat' => "%related%",
-        'relatedPrefix'        => ""
+        'relatedVarNameFormat' => '%related%',
+        'relatedPrefix'        => '',
     );
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param string $name
-     * @param array $options
+     * @param array  $options
      */
     public function __construct($name, array $options)
     {
@@ -72,22 +70,25 @@ class Schema extends ContainerAware
     }
 
     /**
-     * Set options
+     * Set options.
      *
      * @param array $options
+     *
      * @return \MysqlWorkbenchSchemaExporterBundle\Core\Schema
      */
     public function setOptions(array $options)
     {
         $this->options = $options;
+
         return $this;
     }
 
     /**
-     * Get an option
+     * Get an option.
      *
      * @param string $key
-     * @param mixed $default
+     * @param mixed  $default
+     *
      * @return mixed
      */
     public function getOption($key, $default = null)
@@ -96,7 +97,7 @@ class Schema extends ContainerAware
     }
 
     /**
-     * Get the bunde name
+     * Get the bunde name.
      *
      * @return string
      */
@@ -106,26 +107,29 @@ class Schema extends ContainerAware
     }
 
     /**
-     * Set the bundle name
+     * Set the bundle name.
      *
      * @param string $name
+     *
      * @return \MysqlWorkbenchSchemaExporterBundle\Core\Schema
      */
     public function setName($name)
     {
         $this->name = $name;
+
         return $this;
     }
 
     /**
-     * Get the MySQL Workbench file
+     * Get the MySQL Workbench file.
      *
      * @return string
+     *
      * @throws \RuntimeException
      */
     protected function getMwbFile()
     {
-        $file = $this->getBundle()->getPath() . DIRECTORY_SEPARATOR . sprintf($this->getOption('file'), $this->getName());
+        $file = $this->getBundle()->getPath().DIRECTORY_SEPARATOR.sprintf($this->getOption('file'), $this->getName());
 
         if (!file_exists($file)) {
             throw new \RuntimeException(sprintf('Unable to locate the MySQL Workbench File %s', $file));
@@ -135,7 +139,7 @@ class Schema extends ContainerAware
     }
 
     /**
-     * Get the bundle reflection class
+     * Get the bundle reflection class.
      *
      * @return \Symfony\Component\HttpKernel\Bundle\Bundle
      */
@@ -146,33 +150,33 @@ class Schema extends ContainerAware
             $kernel = $this->container->get('kernel');
             $this->bundle = $kernel->getBundle($bundle);
         }
+
         return $this->bundle;
     }
 
     /**
-     * Get the root output directory
+     * Get the root output directory.
      *
      * @return string
      */
     protected function getBundleRootDir()
     {
-        return $this->getBundle()->getPath() . DIRECTORY_SEPARATOR;
+        return $this->getBundle()->getPath().DIRECTORY_SEPARATOR;
     }
 
     /**
-     * Get the model output directory
+     * Get the model output directory.
      *
      * @return string
      */
     protected function getOutpuModeltDir()
     {
-        return $this->getBundleRootDir() .
+        return $this->getBundleRootDir().
                $this->getOption('output_dir', 'Entity/Model');
-
     }
 
     /**
-     * Get the entity output directory
+     * Get the entity output directory.
      *
      * @return string
      */
@@ -182,19 +186,18 @@ class Schema extends ContainerAware
     }
 
     /**
-     * Get the config output directory
+     * Get the config output directory.
      *
      * @return string
      */
     protected function getOutpuConfigDir()
     {
-        return $this->getBundleRootDir() .
+        return $this->getBundleRootDir().
         $this->getOption('config_dir', 'Resources/config');
-
     }
 
     /**
-     * Get the formatter params
+     * Get the formatter params.
      *
      * @return string[][]
      */
@@ -203,24 +206,24 @@ class Schema extends ContainerAware
         $params = array_merge(
             $this->defaultFormatterParams,
             array(
-                'bundleNamespace' => $this->getBundle()->getNamespace()
+                'bundleNamespace' => $this->getBundle()->getNamespace(),
             ),
             $this->getOption('params', array())
         );
+
         return $params;
     }
-
 
     private function runCmd($cmd, OutputInterface $output)
     {
         @exec($cmd, $res, $returnVar);
 
-        if(!$returnVar) {
-            foreach($res as $r) {
+        if (!$returnVar) {
+            foreach ($res as $r) {
                 $output->writeln(sprintf('<info>%s</info>', $r));
             }
         } else {
-            foreach($res as $r) {
+            foreach ($res as $r) {
                 $output->writeln(sprintf('<comment>%s</comment>', $r));
             }
         }
@@ -234,17 +237,17 @@ class Schema extends ContainerAware
         $this->console->setAutoExit(false);
         $this->console->setCatchExceptions(false);
 
-        $this->console->add(new GenerateEntitiesDoctrineCommand);
-        $this->console->add(new ConvertMappingDoctrineCommand);
+        $this->console->add(new GenerateEntitiesDoctrineCommand());
+        $this->console->add(new ConvertMappingDoctrineCommand());
 
         $self = $this;
 
         $this->console->register('rm')
             ->setDefinition([new InputArgument('path', InputArgument::REQUIRED)])
-            ->setCode(function (InputInterface $input, OutputInterface $output) use($self) {
+            ->setCode(function (InputInterface $input, OutputInterface $output) use ($self) {
 
                     $path = $input->getArgument('path');
-                    $cmd = 'rm -rf '.$path. ' 2>&1';
+                    $cmd = 'rm -rf '.$path.' 2>&1';
 
                     $output->writeln(sprintf('<comment>%s</comment>', $cmd));
                     $self->runCmd($cmd, $output);
@@ -253,19 +256,18 @@ class Schema extends ContainerAware
 
         $this->console->register('mkdir')
             ->setDefinition([new InputArgument('path', InputArgument::REQUIRED)])
-            ->setCode(function (InputInterface $input, OutputInterface $output) use($self) {
+            ->setCode(function (InputInterface $input, OutputInterface $output) use ($self) {
 
                     $path = $input->getArgument('path');
-                    $cmd = 'mkdir '.$path. ' 2>&1';
+                    $cmd = 'mkdir '.$path.' 2>&1';
                     $output->writeln(sprintf('<comment>%s</comment>', $cmd));
                     $self->runCmd($cmd, $output);
                 })
         ;
-
     }
 
     /**
-     * Export
+     * Export.
      *
      * @param OutputInterface $output
      */
@@ -274,15 +276,15 @@ class Schema extends ContainerAware
         $output->writeln(sprintf('Exporting "<info>%s</info>" schema', $this->getName()));
 
         $outputEntityDir = $this->getOutpuEntitytDir();
-        $this->console->run(new ArrayInput(['command' => 'mkdir', 'path'=>$outputEntityDir]));
+        $this->console->run(new ArrayInput(['command' => 'mkdir', 'path' => $outputEntityDir]));
 
         $outputModelDir = $this->getOutpuModeltDir();
-        $this->console->run(new ArrayInput(['command' => 'rm', 'path'=>$outputModelDir]));
+        $this->console->run(new ArrayInput(['command' => 'rm', 'path' => $outputModelDir]));
 
         $configDoctrineDir = $this->getOutpuConfigDir().'/doctrine';
 
         $configDoctrineXmlDir = $configDoctrineDir.'-xml';
-        $this->console->run(new ArrayInput(['command' => 'rm', 'path'=>$configDoctrineXmlDir]));
+        $this->console->run(new ArrayInput(['command' => 'rm', 'path' => $configDoctrineXmlDir]));
 
         $bootstrap = new Bootstrap();
 
@@ -312,7 +314,7 @@ class Schema extends ContainerAware
     }
 
     /**
-     * Export with repository
+     * Export with repository.
      *
      * @param OutputInterface $output
      */
@@ -321,7 +323,7 @@ class Schema extends ContainerAware
         $output->writeln(sprintf('Exporting "<info>%s</info>" schema', $this->getName()));
 
         $outputEntityDir = $this->getOutpuEntitytDir();
-        $this->console->run(new ArrayInput(['command' => 'mkdir', 'path'=>$outputEntityDir]));
+        $this->console->run(new ArrayInput(['command' => 'mkdir', 'path' => $outputEntityDir]));
         $bootstrap = new Bootstrap();
 
         // define a formatter and do configuration
@@ -334,6 +336,6 @@ class Schema extends ContainerAware
             $formatter,
             $this->getMwbFile(),
             $this->getOutpuModeltDir()
-        );        
+        );
     }
 }

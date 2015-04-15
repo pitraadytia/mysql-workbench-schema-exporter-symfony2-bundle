@@ -3,10 +3,8 @@
 namespace MysqlWorkbenchSchemaExporterBundle\Command;
 
 use MysqlWorkbenchSchemaExporterBundle\Service\Exporter;
-
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -17,16 +15,14 @@ use Symfony\Component\Console\Output\OutputInterface;
 class ExportWithRepositoryCommand extends ContainerAwareCommand
 {
     /**
-     * Verbose flag
+     * Verbose flag.
      *
      * @var bool
      */
     protected $verbose;
 
     /**
-     * Configure method
-     *
-     * @return void
+     * Configure method.
      */
     protected function configure()
     {
@@ -37,12 +33,10 @@ class ExportWithRepositoryCommand extends ContainerAwareCommand
     }
 
     /**
-     * Initialise
+     * Initialise.
      *
-     * @param \Symfony\Component\Console\Input\InputInterface $input
+     * @param \Symfony\Component\Console\Input\InputInterface   $input
      * @param \Symfony\Component\Console\Output\OutputInterface $output
-     *
-     * @return void
      */
     protected function initialize(InputInterface $input, OutputInterface $output)
     {
@@ -52,12 +46,10 @@ class ExportWithRepositoryCommand extends ContainerAwareCommand
     }
 
     /**
-     * Execute method
+     * Execute method.
      *
-     * @param \Symfony\Component\Console\Input\InputInterface $input
+     * @param \Symfony\Component\Console\Input\InputInterface   $input
      * @param \Symfony\Component\Console\Output\OutputInterface $output
-     *
-     * @return void
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
