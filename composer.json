@@ -12,12 +12,18 @@
             "role": "Developer"
         }
     ],
+    "repositories": [
+       {
+           "type": "vcs",
+           "url": "https://github.com/pitraadytia/mysql-workbench-schema-exporter"
+       }
+    ],
     "require": {
         "php": ">=5.3.3",
         "symfony/symfony": "2.*",
         "doctrine/orm": "~2.2,>=2.2.3",
         "doctrine/doctrine-bundle": "1.*",
-        "turnaev/mysql-workbench-schema-exporter": ">=1.3.4"
+        "turnaev/mysql-workbench-schema-exporter": "dev-patch-namespace"
     },
     
     "autoload": {
