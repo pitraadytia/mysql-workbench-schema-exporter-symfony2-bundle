@@ -23,7 +23,7 @@
         "symfony/symfony": "2.*",
         "doctrine/orm": "~2.2,>=2.2.3",
         "doctrine/doctrine-bundle": "1.*",
-        "turnaev/mysql-workbench-schema-exporter": "dev-patch-namespace"
+        "turnaev/mysql-workbench-schema-exporter": "dev-patch-namespace as 1.3.4"
     },
     
     "autoload": {
